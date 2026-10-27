@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kijana Msafi - Cafe, Luxury Stays & Motors Nyahururu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Pacifico (Curly script for brand) & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        .font-curly {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* AliceWhite base background with subtle warm radial gradient mesh */
+        .alice-bg {
+            background-color: #F0F8FF;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(229, 9, 20, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(132, 204, 22, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(255, 255, 255, 0.85) 0px, transparent 100%);
+            background-attachment: fixed;
+        }
+
+        /* Glassmorphism surfaces */
+        .glass-clean {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Portrait Aspect Ratio Box */
+        .aspect-a4 {
+            aspect-ratio: 1 / 1.4;
+        }
+
+        /* Hide scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .carousel-container {
+            perspective: 1200px;
+        }
+
+        /* Smooth animated transitions */
+        .menu-card, .stay-card-animated {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, filter 0.6s ease;
+            will-change: transform, opacity;
+        }
+
+        /* On-scroll reveal animation */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+        .pulse-btn {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="alice-bg min-h-screen text-slate-900 overflow-x-hidden flex flex-col justify-between relative w-full m-0 p-0">
+    
+    <!-- Top Minimal Header Navigation (No borders or heavy backgrounds) -->
+    <header class="sticky top-0 z-40 w-full px-3 py-1.5 sm:px-6">
+        <div class="w-full max-w-5xl mx-auto flex items-center justify-between py-1">
+            
+            <!-- Brand Logo & Title with Curly Font -->
+            <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchView('hero')">
+                <div class="w-10 h-10 rounded-2xl bg-red-600 p-0.5 flex items-center justify-center border-2 border-lime-400 overflow-hidden shadow-md flex-shrink-0">
+                    <img src="logo.png" alt="Kijana Msafi Logo" class="w-full h-full object-cover rounded-xl" onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\'fa-solid fa-hotel text-white text-base\'></i>';">
+                </div>
+                <div>
+                    <span class="font-curly text-xl sm:text-2xl text-red-600 drop-shadow-sm leading-none block">Kijana Msafi</span>
+                    <span class="text-[9px] sm:text-[10px] text-slate-700 font-bold tracking-tight block uppercase">Nyahururu • Cafe & Stays</span>
+                </div>
+            </div>
+
+            <!-- Quick Action Icons -->
+            <div class="flex items-center gap-2">
+                <!-- Direct Nav Links (PC Screen Visible) -->
+                <nav class="hidden md:flex items-center gap-4 mr-2">
+                    <button onclick="switchView('menu')" class="text-xs font-black text-slate-800 hover:text-red-600 uppercase tracking-wider transition">Food Menu</button>
+                    <button onclick="switchView('stays')" class="text-xs font-black text-slate-800 hover:text-red-600 uppercase tracking-wider transition">Hotels & BnBs</button>
+                    <button onclick="switchView('motors')" class="text-xs font-black text-slate-800 hover:text-red-600 uppercase tracking-wider transition">Motors & Rentals</button>
+                </nav>
+
+                <!-- Cart Trigger Badge -->
+                <button onclick="toggleCartModal()" class="relative p-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl transition flex items-center justify-center shadow-md active:scale-95" aria-label="Order Cart">
+                    <i class="fa-solid fa-utensils text-lime-300 text-sm"></i>
+                    <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-lime-500 text-slate-950 text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white hidden">0</span>
+                </button>
+
+                <!-- Hamburger Navigation Drawer Toggle -->
+                <button id="menu-btn" onclick="toggleDrawer()" class="p-2.5 bg-slate-900 text-white hover:bg-slate-800 rounded-xl transition focus:outline-none shadow-md" aria-label="Menu">
+                    <i class="fa-solid fa-bars-staggered text-base"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Drawer -->
+    <div id="drawer-overlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleDrawer()"></div>
+    
+    <aside id="drawer" class="fixed top-0 right-0 w-80 h-full bg-slate-950 text-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 flex flex-col justify-between shadow-2xl border-l-4 border-red-600">
+        <div>
+            <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                <div>
+                    <h3 class="font-curly text-2xl text-red-500">Kijana Msafi</h3>
+                    <p class="text-xs text-lime-400 font-medium">Nyahururu, Kenya</p>
+                </div>
+                <button onclick="toggleDrawer()" class="text-white/70 hover:text-white text-2xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="javascript:void(0)" onclick="toggleDrawer(); switchView('hero')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl hover:bg-white/10 transition text-white">
+                    <i class="fa-solid fa-house text-lime-400 w-5"></i> Home / Overview
+                </a>
+                <a href="javascript:void(0)" onclick="toggleDrawer(); switchView('menu')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl bg-red-600 text-white">
+                    <i class="fa-solid fa-utensils text-lime-300 w-5"></i> Food & Cafe Menu
+                </a>
+                <a href="javascript:void(0)" onclick="toggleDrawer(); switchView('stays')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl hover:bg-white/10 transition text-white">
+                    <i class="fa-solid fa-hotel text-lime-400 w-5"></i> Hotels, BnBs & Apartments
+                </a>
+                <a href="javascript:void(0)" onclick="toggleDrawer(); switchView('motors')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl hover:bg-white/10 transition text-white">
+                    <i class="fa-solid fa-car text-lime-400 w-5"></i> Kijana Msafi Motors
+                </a>
+                <a href="javascript:void(0)" onclick="toggleDrawer(); showInfoModal('about')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl hover:bg-white/10 transition text-white/90">
+                    <i class="fa-solid fa-circle-info text-lime-400 w-5"></i> About Us
+                </a>
+                <a href="javascript:void(0)" onclick="toggleDrawer(); showInfoModal('contact')" class="flex items-center gap-3 text-sm font-bold p-3 rounded-xl hover:bg-white/10 transition text-white/90">
+                    <i class="fa-solid fa-location-dot text-lime-400 w-5"></i> Locations & Contact
+                </a>
+            </nav>
+        </div>
+
+        <div class="space-y-3 border-t border-white/10 pt-4 text-center">
+            <a href="https://wa.me/254707269581?text=Hello%20Kijana%20Msafi%20Nyahururu,%20I%20have%20an%20inquiry." target="_blank" class="w-full py-2.5 rounded-xl bg-lime-500 hover:bg-lime-600 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition shadow-lg">
+                <i class="fa-brands fa-whatsapp text-base"></i> Direct WhatsApp (+254 707 269581)
+            </a>
+            <p class="text-[10px] text-white/50">© Kijana Msafi Nyahururu Hub</p>
+        </div>
+    </aside>
+
+    <!-- Main Container -->
+    <main class="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 my-1 z-10">
+
+        <!-- VIEW 0: HERO OVERVIEW & TESTIMONIALS LANDING -->
+        <div id="view-hero" class="w-full space-y-6 py-2">
+            <!-- Hero Banner Box -->
+            <div class="glass-clean rounded-3xl p-6 sm:p-10 border-2 border-red-600 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-3 max-w-lg text-center md:text-left z-10">
+                    <span class="bg-red-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Welcome to Nyahururu</span>
+                    <h1 class="font-curly text-3xl sm:text-5xl text-red-600 leading-tight">Kijana Msafi Hub</h1>
+                    <p class="text-sm sm:text-base text-slate-700 font-semibold leading-relaxed">
+                        Experience Nyahururu's top dining & luxury accommodation network. From hot grilled Nyama Choma near Thomson's Falls to executive Airbnb suites and car rentals.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
+                        <button onclick="switchView('menu')" class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition">
+                            <i class="fa-solid fa-utensils text-lime-300"></i> Cafe Menu
+                        </button>
+                        <button onclick="switchView('stays')" class="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg flex items-center gap-2 transition">
+                            <i class="fa-solid fa-hotel text-lime-400"></i> Book Stays
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Showcase Collage -->
+                <div class="relative w-full md:w-80 h-56 rounded-2xl overflow-hidden shadow-2xl border-2 border-lime-500">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Kijana Msafi Stays" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-3 left-3 right-3 text-white">
+                        <span class="text-[10px] font-black text-lime-400 uppercase tracking-widest">Nyahururu • Ol Kalou</span>
+                        <p class="text-xs font-bold truncate">Furnished Apartments & Boutique Guest Rooms</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Quick Badges -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="glass-clean p-4 rounded-2xl text-center space-y-1 shadow-sm border border-red-200">
+                    <i class="fa-solid fa-utensils text-2xl text-red-600"></i>
+                    <h4 class="text-xs font-black">Fresh Dining</h4>
+                    <p class="text-[10px] text-slate-600">Local & Swahili Dishes</p>
+                </div>
+                <div class="glass-clean p-4 rounded-2xl text-center space-y-1 shadow-sm border border-red-200">
+                    <i class="fa-solid fa-bed text-2xl text-lime-600"></i>
+                    <h4 class="text-xs font-black">Luxury Airbnbs</h4>
+                    <p class="text-[10px] text-slate-600">Hotels & Apartments</p>
+                </div>
+                <div class="glass-clean p-4 rounded-2xl text-center space-y-1 shadow-sm border border-red-200">
+                    <i class="fa-solid fa-car text-2xl text-red-600"></i>
+                    <h4 class="text-xs font-black">Msafi Motors</h4>
+                    <p class="text-[10px] text-slate-600">Car Sales & Hire</p>
+                </div>
+                <div class="glass-clean p-4 rounded-2xl text-center space-y-1 shadow-sm border border-red-200">
+                    <i class="fa-solid fa-clock text-2xl text-lime-600"></i>
+                    <h4 class="text-xs font-black">24/7 Reception</h4>
+                    <p class="text-[10px] text-slate-600">Near Thomson's Falls</p>
+                </div>
+            </div>
+
+            <!-- Guest Testimonials -->
+            <div class="glass-clean p-5 rounded-3xl border border-red-200 space-y-3">
+                <h3 class="text-sm font-black text-red-600 uppercase tracking-wide text-center">Guest Testimonials</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex text-amber-400 text-xs gap-0.5">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-xs text-slate-700 italic">"The Nyama Choma was fresh and tender, and our Airbnb stay near Thomson's Falls was extremely clean!"</p>
+                        <p class="text-[10px] font-black text-slate-900">— Kamau M., Nairobi</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-1">
+                        <div class="flex text-amber-400 text-xs gap-0.5">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-xs text-slate-700 italic">"Warm hospitality in Ol Kalou branch. Fast WhatsApp ordering and response time."</p>
+                        <p class="text-[10px] font-black text-slate-900">— Sarah W., Nakuru</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 1: FOOD MENU CAROUSEL & GRID VIEW -->
+        <div id="view-menu" class="w-full flex-col hidden items-center my-auto py-1">
+
+            <!-- Category Filter Bar (Dropdown & Dynamic Combined Toggle) -->
+            <div class="w-full max-w-md relative z-30 mb-2 space-y-2">
+                <div class="flex items-center justify-between gap-2 w-full">
+                    <!-- Dropdown Select Trigger -->
+                    <button onclick="toggleItemsDropdown()" id="tab-all" class="flex-1 py-2 px-3 text-xs font-bold rounded-xl shadow-sm bg-red-600 text-white flex items-center justify-between">
+                        <span class="truncate"><i class="fa-solid fa-list-ul mr-1.5 text-lime-300"></i> Select Dish (1-20)</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform" id="dropdown-icon"></i>
+                    </button>
+
+                    <!-- Combined Single Dynamic Toggle Button (Popular / Specials) -->
+                    <button onclick="togglePopularSpecials()" id="toggle-specials-btn" class="py-2 px-3 text-xs font-bold rounded-xl shadow-sm bg-white text-slate-800 border border-slate-300 hover:bg-slate-100 transition truncate">
+                        <i class="fa-solid fa-fire text-red-600 mr-1"></i> Popular Specials
+                    </button>
+
+                    <!-- View All Grid Modal Toggle Button -->
+                    <button onclick="openGridModal()" class="py-2 px-3 text-xs font-bold rounded-xl shadow-sm bg-slate-900 text-white hover:bg-slate-800 transition flex items-center gap-1">
+                        <i class="fa-solid fa-table-cells text-lime-400"></i> Grid View
+                    </button>
+                </div>
+
+                <!-- Dropdown Select Menu -->
+                <div id="items-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-900 text-white rounded-2xl p-2 shadow-2xl border border-red-500 max-h-64 overflow-y-auto z-50 no-scrollbar">
+                    <div class="grid grid-cols-1 gap-1" id="dropdown-items-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Display Container -->
+            <div class="relative w-full max-w-md carousel-container my-auto flex flex-col items-center">
+                <div id="carousel-track" class="w-full flex justify-center items-center relative h-[360px] sm:h-[400px] overflow-visible">
+                    <!-- Dynamic food cards populated via JavaScript -->
+                </div>
+
+                <!-- Carousel Navigation Controls -->
+                <div class="flex items-center justify-between w-full px-2 mt-2">
+                    <button onclick="prevSlide(); resetAutoPlay();" class="w-10 h-10 rounded-full bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center hover:bg-slate-100 active:scale-95 transition" aria-label="Previous">
+                        <i class="fa-solid fa-chevron-left text-sm text-red-600"></i>
+                    </button>
+
+                    <div class="bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black tracking-widest shadow-md flex items-center gap-1">
+                        <span id="current-index" class="text-lime-300">1</span> / <span id="total-count">20</span>
+                    </div>
+
+                    <button onclick="nextSlide(); resetAutoPlay();" class="w-10 h-10 rounded-full bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center hover:bg-slate-100 active:scale-95 transition" aria-label="Next">
+                        <i class="fa-solid fa-chevron-right text-sm text-red-600"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bright Red & Lime Order Button Bar -->
+            <div class="w-full max-w-md mt-3 mb-2">
+                <button id="order-btn" onclick="addCurrentToCart()" class="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm tracking-wider uppercase shadow-xl border-2 border-lime-400 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 pulse-btn">
+                    <i class="fa-solid fa-cart-plus text-base text-lime-300"></i>
+                    <span>Add Dish To Order</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: HOTELS, BNBS & APARTMENTS -->
+        <div id="view-stays" class="w-full flex-col hidden py-2 space-y-3 no-scrollbar max-h-[80vh] overflow-y-auto pr-1">
+            <div class="glass-clean p-4 rounded-2xl border-2 border-red-600 text-center shadow-md">
+                <h2 class="font-curly text-xl text-red-600">Kijana Msafi Stays & Accommodations</h2>
+                <p class="text-xs text-slate-700 font-semibold mt-0.5">Furnished Airbnbs, Executive Suites & Guest Rooms in Nyahururu & Regional Locations.</p>
+                
+                <div class="flex items-center justify-center gap-2 mt-3 pt-2 border-t border-slate-200">
+                    <button id="btn-stays-carousel" onclick="setStaysViewMode('carousel')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-sliders text-lime-300"></i> Carousel Animation
+                    </button>
+                    <button id="btn-stays-scroll" onclick="setStaysViewMode('scroll')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-800 hover:bg-slate-300 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-list text-red-600"></i> View All List
+                    </button>
+                </div>
+            </div>
+
+            <!-- Animated BnB Carousel View -->
+            <div id="stays-carousel-view" class="w-full flex flex-col items-center">
+                <div id="stays-carousel-track" class="w-full max-w-md flex justify-center items-center relative h-[360px] sm:h-[380px] overflow-visible my-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                
+                <div class="flex items-center justify-between w-full max-w-md px-2 mt-1">
+                    <button onclick="prevStaySlide()" class="w-10 h-10 rounded-full bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center hover:bg-slate-100 active:scale-95 transition">
+                        <i class="fa-solid fa-chevron-left text-sm text-red-600"></i>
+                    </button>
+                    <span id="stay-indicator" class="bg-red-600 text-lime-300 text-xs font-black px-3.5 py-1 rounded-full shadow-sm">1 / 3</span>
+                    <button onclick="nextStaySlide()" class="w-10 h-10 rounded-full bg-white text-slate-900 shadow-md border border-slate-200 flex items-center justify-center hover:bg-slate-100 active:scale-95 transition">
+                        <i class="fa-solid fa-chevron-right text-sm text-red-600"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Normal Scroll List View -->
+            <div id="stays-scroll-view" class="space-y-4 hidden pb-4">
+                <!-- Rendered dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- VIEW 3: KIJANA MSAFI MOTORS & PARTNERS -->
+        <div id="view-motors" class="w-full flex-col hidden py-2 space-y-4">
+            <div class="glass-clean p-6 rounded-3xl border-2 border-red-600 text-center shadow-lg space-y-2">
+                <div class="w-12 h-12 bg-red-600 text-lime-300 rounded-2xl flex items-center justify-center mx-auto text-2xl font-black shadow-md">
+                    <i class="fa-solid fa-car"></i>
+                </div>
+                <h2 class="font-curly text-2xl text-red-600">Kijana Msafi Motors & Logistics</h2>
+                <p class="text-xs text-slate-700 font-semibold max-w-md mx-auto">
+                    Part of the Kijana Msafi Group in Nyahururu. Quality vehicle sales, car hire services, and regional transit solutions.
+                </p>
+                <div class="pt-2">
+                    <a href="https://wa.me/254707269581?text=Hello%20Kijana%20Msafi%20Motors,%20I%20am%20inquiring%20about%20vehicle%20sales/rentals." target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-600 text-slate-950 font-black text-xs transition shadow-md">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Inquire at Motors (+254 707 269581)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- VIEW ALL GRID MODAL (All Dishes Overview Grid) -->
+    <div id="grid-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[88vh] flex flex-col p-4 sm:p-6 shadow-2xl border-2 border-red-600">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+                <div>
+                    <h3 class="font-curly text-2xl text-red-600">All Menu Dishes</h3>
+                    <p class="text-xs text-slate-500 font-semibold">Tap any dish to jump straight into order view</p>
+                </div>
+                <button onclick="closeGridModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Grid Items Container -->
+            <div class="flex-1 overflow-y-auto py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 no-scrollbar" id="grid-items-container">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Advance Order & WhatsApp Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 text-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border-t-4 border-red-600 flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10">
+                <h3 class="text-lg font-black text-red-500 flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-2xl text-lime-400"></i>
+                    Advance Food Order
+                </h3>
+                <button onclick="toggleCartModal()" class="text-white/60 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div id="cart-items-container" class="flex-1 overflow-y-auto py-3 space-y-2.5 no-scrollbar my-1">
+                <!-- Items dynamic list -->
+            </div>
+
+            <!-- Order Total Banner -->
+            <div id="cart-total-banner" class="flex justify-between items-center py-2 px-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold text-lime-300">
+                <span>Total Amount:</span>
+                <span id="cart-total-price" class="text-base font-black text-lime-400">Ksh 0</span>
+            </div>
+
+            <!-- Customer Details for WhatsApp -->
+            <div class="space-y-2.5 pt-3 border-t border-white/10 mt-2">
+                <input type="text" id="cust-name" placeholder="Your Name (Optional)" class="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-red-500">
+                <textarea id="cust-note" placeholder="Table # or Delivery/Special Notes (Optional)" rows="2" class="w-full bg-white/5 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-red-500"></textarea>
+                
+                <button onclick="sendWhatsAppOrder()" class="w-full py-3 bg-lime-500 hover:bg-lime-600 text-slate-950 font-black rounded-xl flex items-center justify-center gap-2 text-base transition shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    Checkout to WhatsApp (+254 707 269581)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal (About / Contact) -->
+    <div id="info-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 text-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-red-500 text-center">
+            <div id="info-content"></div>
+            <button onclick="closeInfoModal()" class="mt-6 w-full py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Feedback Notification -->
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-2xl border-2 border-lime-400 flex items-center gap-2 transform -translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i class="fa-solid fa-circle-check text-lime-400"></i>
+        <span id="toast-msg">Added!</span>
+    </div>
+
+    <!-- Professional Footer with Superlinks & Partners -->
+    <footer class="w-full bg-slate-950 text-white mt-12 border-t-4 border-red-600 pt-10 pb-6 px-4 sm:px-8">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-white/10">
+            <!-- Brand Column -->
+            <div class="space-y-3">
+                <h3 class="font-curly text-2xl text-red-500">Kijana Msafi</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Nyahururu's premier hospitality and service hub. Offering fine dining, luxury Airbnbs near Thomson's Falls, guest suites, and car sales.
+                </p>
+                <div class="flex items-center gap-3 text-lime-400 text-sm">
+                    <a href="https://wa.me/254707269581" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <!-- Super Links Navigation -->
+            <div>
+                <h4 class="text-xs font-black text-red-400 uppercase tracking-wider mb-3">Quick Links</h4>
+                <ul class="space-y-2 text-xs text-slate-300 font-medium">
+                    <li><a href="javascript:void(0)" onclick="switchView('menu')" class="hover:text-lime-400 transition">Food & Cafe Menu</a></li>
+                    <li><a href="javascript:void(0)" onclick="switchView('stays')" class="hover:text-lime-400 transition">Hotels, Airbnbs & Suites</a></li>
+                    <li><a href="javascript:void(0)" onclick="switchView('motors')" class="hover:text-lime-400 transition">Kijana Msafi Motors</a></li>
+                    <li><a href="javascript:void(0)" onclick="showInfoModal('about')" class="hover:text-lime-400 transition">About Our Hub</a></li>
+                </ul>
+            </div>
+
+            <!-- Partner Entities -->
+            <div>
+                <h4 class="text-xs font-black text-red-400 uppercase tracking-wider mb-3">Partner Network</h4>
+                <ul class="space-y-2 text-xs text-slate-300 font-medium">
+                    <li><a href="javascript:void(0)" onclick="switchView('motors')" class="hover:text-lime-400 transition"><i class="fa-solid fa-car text-lime-400 mr-1.5"></i> Kijana Msafi Motors</a></li>
+                    <li><a href="javascript:void(0)" class="hover:text-lime-400 transition"><i class="fa-solid fa-building text-lime-400 mr-1.5"></i> Msafi Real Estate & Homes</a></li>
+                    <li><a href="javascript:void(0)" class="hover:text-lime-400 transition"><i class="fa-solid fa-water text-lime-400 mr-1.5"></i> Thomson's Falls Tour Guide</a></li>
+                </ul>
+            </div>
+
+            <!-- Support & Enquiries -->
+            <div>
+                <h4 class="text-xs font-black text-red-400 uppercase tracking-wider mb-3">Support & Enquiries</h4>
+                <div class="space-y-2 text-xs text-slate-300">
+                    <p class="flex items-center gap-2"><i class="fa-solid fa-phone text-lime-400"></i> +254 707 269581</p>
+                    <p class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-lime-400"></i> Nyahururu Town, Kenya</p>
+                    <p class="flex items-center gap-2"><i class="fa-solid fa-clock text-lime-400"></i> 6:30 AM - 10:30 PM Daily</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-5xl mx-auto pt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-500 gap-2">
+            <p>© 2026 Kijana Msafi Cafe, Stays & Motors Network. All Rights Reserved.</p>
+            <p>Designed for Mobile & Desktop</p>
+        </div>
+    </footer>
+
+    <script>
+        // Kenyan food menu dataset
+        const allMenuItems = [
+            { id: 1, title: "Nyama Choma Special", price: 750, isPopular: true, desc: "Charcoal grilled goat/beef tender cuts served with fresh kachumbari.", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" },
+            { id: 2, title: "Mukimo & Beef Stew", price: 450, isPopular: false, desc: "Traditional potatoes, corn & green mash with rich tomato beef gravy.", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" },
+            { id: 3, title: "Kienyeji Chicken Fry", price: 650, isPopular: true, desc: "Pan-fried local free-range chicken cooked with onions and chili.", image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=600&q=80" },
+            { id: 4, title: "Swahili Tilapia Fry", price: 600, isPopular: false, desc: "Crispy deep-fried Lake Tilapia topped with spiced salsa.", image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80" },
+            { id: 5, title: "Kijana Special Pilau", price: 400, isPopular: true, desc: "Fragrant spiced rice cooked with beef broth and tender beef cubes.", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80" },
+            { id: 6, title: "Ugali & Sukuma Wiki", price: 250, isPopular: false, desc: "Fresh steamed cornmeal ugali with sauteed collard greens.", image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80" },
+            { id: 7, title: "Chapati & Dengu Stew", price: 300, isPopular: false, desc: "Soft layered chapatis served with coconut green gram stew.", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80" },
+            { id: 8, title: "Nyahururu Grilled Pork", price: 700, isPopular: true, desc: "Succulent pork ribs glazed with local herb-honey bbq glaze.", image: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80" },
+            { id: 9, title: "Githeri Special", price: 280, isPopular: false, desc: "Boiled corn and bean stew tossed with coriander & diced carrots.", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" },
+            { id: 10, title: "Chef's Mixed Platter", price: 1200, isPopular: true, desc: "Assorted Nyama Choma, Kienyeji Chicken, Sausages & Fries.", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" },
+            { id: 11, title: "Masala Chips & Dip", price: 220, isPopular: false, desc: "Crispy potato fries tossed in tangy spicy masala tomato glaze.", image: "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=600&q=80" },
+            { id: 12, title: "African Mixed Tea", price: 120, isPopular: true, desc: "Rich spiced milk tea infused with ginger, cardamom and cinnamon.", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80" },
+            { id: 13, title: "Crispy Beef Samosa", price: 150, isPopular: false, desc: "Deep fried golden pastry triangles stuffed with spiced minced beef.", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80" },
+            { id: 14, title: "Thomson's Burger", price: 500, isPopular: true, desc: "Juicy beef patty with melted cheese, caramelized onions & fries.", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80" },
+            { id: 15, title: "Fresh Passion Juice", price: 150, isPopular: false, desc: "Chilled natural local Nyahururu passion fruit nectar.", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80" },
+            { id: 16, title: "Mshikaki Beef Skewers", price: 350, isPopular: false, desc: "Marinated beef cubes skewered with bell peppers and flame grilled.", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" },
+            { id: 17, title: "Matoke Beef Stew", price: 380, isPopular: false, desc: "Steamed green plantains stewed with tender beef chunks.", image: "https://images.unsplash.com/photo-1547496502-affa22d38842?auto=format&fit=crop&w=600&q=80" },
+            { id: 18, title: "Full Breakfast Platter", price: 450, isPopular: true, desc: "Eggs, sausages, arrowroots (Nduma), chapati and spiced tea.", image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=600&q=80" },
+            { id: 19, title: "Bhajia Portion", price: 200, isPopular: false, desc: "Sliced potato fritters dipped in seasoned gram flour batter.", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" },
+            { id: 20, title: "Kijana Sweet Pancake", price: 180, isPopular: false, desc: "Fluffy sweet pancakes drizzled with local acacia honey.", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        // Hotels & BnBs dataset
+        const kijanaStaysData = [
+            {
+                id: "nyahururu-main",
+                name: "Kijana Msafi Hotel & Airbnbs (Nyahururu)",
+                location: "Nyahururu Town (Moi Estate / Gilgil-Nyahururu Hwy)",
+                distance: "1.8 miles from Thomson's Falls",
+                priceRange: "Ksh 1,000 - Ksh 15,000 / night",
+                amenities: ["Free Wi-Fi", "Hot Showers", "Flat Screen TV", "Secure Parking", "Pet Friendly", "Breakfast Available"],
+                images: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80"
+                ],
+                rates: [
+                    "Single Room: Ksh 1,000 / night",
+                    "King Room: Ksh 1,500 / night",
+                    "Bedsitter & 1-2 Bedroom: Ksh 2,000 - 5,000 / night",
+                    "5-Bedroom Compound: Ksh 15,000 / night"
+                ]
+            },
+            {
+                id: "ol-kalou",
+                name: "Kijana Msafi Branch (Ol Kalou)",
+                location: "Ol Kalou Railway Station Area, Nyandarua",
+                distance: "Central Ol Kalou Town",
+                priceRange: "Ksh 1,200 - Ksh 3,500 / night",
+                amenities: ["24h Front Desk", "Room Service", "Wardrobe Units", "Luggage Storage", "Private Bathrooms"],
+                images: [
+                    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=600&q=80"
+                ],
+                rates: [
+                    "Standard Room: Ksh 1,200 / night",
+                    "Deluxe Executive: Ksh 2,500 / night"
+                ]
+            },
+            {
+                id: "regional-apartments",
+                name: "Kijana Msafi Furnished Apartments Network",
+                location: "Nairobi (Luthuli / Thika Rd / Roysambu), Nakuru & Eldoret",
+                distance: "Prime City & Transit Locations",
+                priceRange: "Ksh 2,500 - Ksh 8,000 / night",
+                amenities: ["Fully Equipped Kitchen", "Smart TV & Netflix", "High-Speed Wi-Fi", "Daily Housekeeping"],
+                images: [
+                    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+                ],
+                rates: [
+                    "Studio Apartment: Ksh 2,500 / night",
+                    "1-Bedroom Executive: Ksh 3,500 / night",
+                    "2-Bedroom Family Suite: Ksh 6,000 / night"
+                ]
+            }
+        ];
+
+        let menuItems = [...allMenuItems];
+        let currentIndex = 0;
+        let currentStayIndex = 0;
+        let staysViewMode = 'carousel';
+        let cart = [];
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let autoPlayTimer = null;
+        let currentActiveView = 'hero';
+        let isShowingPopularOnly = false;
+
+        window.onload = function() {
+            renderCarousel();
+            updateIndicators();
+            setupTouchGestures();
+            populateDropdownList();
+            renderStaysCarousel();
+            renderStaysScrollView();
+            renderGridModalItems();
+            setupScrollReveal();
+            startAutoPlay();
+
+            document.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('items-dropdown');
+                const tabAll = document.getElementById('tab-all');
+                if (dropdown && !dropdown.contains(e.target) && !tabAll.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                    const icon = document.getElementById('dropdown-icon');
+                    if (icon) icon.classList.remove('rotate-180');
+                }
+            });
+        };
+
+        function startAutoPlay() {
+            if (autoPlayTimer) clearInterval(autoPlayTimer);
+            autoPlayTimer = setInterval(() => {
+                if (currentActiveView === 'menu') {
+                    nextSlide();
+                } else if (currentActiveView === 'stays' && staysViewMode === 'carousel') {
+                    nextStaySlide();
+                }
+            }, 6000);
+        }
+
+        function resetAutoPlay() {
+            startAutoPlay();
+        }
+
+        function switchView(viewName) {
+            currentActiveView = viewName;
+            const heroView = document.getElementById('view-hero');
+            const menuView = document.getElementById('view-menu');
+            const staysView = document.getElementById('view-stays');
+            const motorsView = document.getElementById('view-motors');
+
+            heroView.classList.add('hidden');
+            menuView.classList.add('hidden');
+            menuView.classList.remove('flex');
+            staysView.classList.add('hidden');
+            staysView.classList.remove('flex');
+            motorsView.classList.add('hidden');
+            motorsView.classList.remove('flex');
+
+            if (viewName === 'hero') {
+                heroView.classList.remove('hidden');
+            } else if (viewName === 'menu') {
+                menuView.classList.remove('hidden');
+                menuView.classList.add('flex');
+                startAutoPlay();
+            } else if (viewName === 'stays') {
+                staysView.classList.remove('hidden');
+                staysView.classList.add('flex');
+                if (staysViewMode === 'scroll') {
+                    setTimeout(triggerScrollReveal, 100);
+                } else {
+                    startAutoPlay();
+                }
+            } else if (viewName === 'motors') {
+                motorsView.classList.remove('hidden');
+                motorsView.classList.add('flex');
+            }
+        }
+
+        function setStaysViewMode(mode) {
+            staysViewMode = mode;
+            const carouselView = document.getElementById('stays-carousel-view');
+            const scrollView = document.getElementById('stays-scroll-view');
+            const btnCarousel = document.getElementById('btn-stays-carousel');
+            const btnScroll = document.getElementById('btn-stays-scroll');
+
+            if (mode === 'carousel') {
+                carouselView.classList.remove('hidden');
+                scrollView.classList.add('hidden');
+                btnCarousel.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white flex items-center gap-1.5 shadow-sm";
+                btnScroll.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-800 hover:bg-slate-300 flex items-center gap-1.5 transition";
+                startAutoPlay();
+            } else {
+                carouselView.classList.add('hidden');
+                scrollView.classList.remove('hidden');
+                btnScroll.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white flex items-center gap-1.5 shadow-sm";
+                btnCarousel.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-800 hover:bg-slate-300 flex items-center gap-1.5 transition";
+                if (autoPlayTimer) clearInterval(autoPlayTimer);
+                setTimeout(triggerScrollReveal, 100);
+            }
+        }
+
+        // Combined Toggle Button for Popular/Specials
+        function togglePopularSpecials() {
+            const btn = document.getElementById('toggle-specials-btn');
+            isShowingPopularOnly = !isShowingPopularOnly;
+
+            if (isShowingPopularOnly) {
+                menuItems = allMenuItems.filter(i => i.isPopular);
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-list text-red-600 mr-1"></i> Show All Dishes`;
+            } else {
+                menuItems = [...allMenuItems];
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-fire text-red-600 mr-1"></i> Popular Specials`;
+            }
+
+            currentIndex = 0;
+            renderCarousel();
+            updateIndicators();
+            resetAutoPlay();
+        }
+
+        function toggleItemsDropdown() {
+            const dropdown = document.getElementById('items-dropdown');
+            const icon = document.getElementById('dropdown-icon');
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                if (isHidden) {
+                    dropdown.classList.remove('hidden');
+                    if (icon) icon.classList.add('rotate-180');
+                } else {
+                    dropdown.classList.add('hidden');
+                    if (icon) icon.classList.remove('rotate-180');
+                }
+            }
+        }
+
+        function populateDropdownList() {
+            const list = document.getElementById('dropdown-items-list');
+            if (!list) return;
+
+            list.innerHTML = allMenuItems.map(item => `
+                <button onclick="jumpToItem(${item.id})" class="w-full text-left py-2 px-3 rounded-xl hover:bg-red-600/30 text-white text-xs font-semibold flex items-center justify-between transition">
+                    <span class="flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-lime-400 text-slate-950 flex items-center justify-center font-bold text-[10px]">${item.id}</span>
+                        <span>${item.title}</span>
+                    </span>
+                    <span class="text-lime-300 font-bold text-[11px]">Ksh ${item.price}</span>
+                </button>
+            `).join('');
+        }
+
+        function jumpToItem(id) {
+            menuItems = [...allMenuItems];
+            isShowingPopularOnly = false;
+            const btn = document.getElementById('toggle-specials-btn');
+            if (btn) btn.innerHTML = `<i class="fa-solid fa-fire text-red-600 mr-1"></i> Popular Specials`;
+
+            const targetIdx = menuItems.findIndex(item => item.id === id);
+            if (targetIdx !== -1) {
+                currentIndex = targetIdx;
+                renderCarousel();
+                updateIndicators();
+                resetAutoPlay();
+            }
+
+            const dropdown = document.getElementById('items-dropdown');
+            const icon = document.getElementById('dropdown-icon');
+            if (dropdown) dropdown.classList.add('hidden');
+            if (icon) icon.classList.remove('rotate-180');
+        }
+
+        function renderCarousel() {
+            const track = document.getElementById('carousel-track');
+            if (!track) return;
+            track.innerHTML = '';
+
+            const len = menuItems.length;
+            if (len === 0) return;
+
+            menuItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `menu-card absolute w-[82%] max-w-[275px] aspect-a4 rounded-2xl overflow-hidden glass-clean shadow-xl flex flex-col justify-between p-2.5 border-2 border-slate-200 cursor-pointer select-none`;
+                
+                let diff = index - currentIndex;
+                if (diff < -Math.floor(len / 2)) diff += len;
+                if (diff > Math.floor(len / 2)) diff -= len;
+
+                if (diff === 0) {
+                    card.style.transform = 'translateX(0) scale(1.02)';
+                    card.style.opacity = '1';
+                    card.style.zIndex = '30';
+                    card.classList.add('ring-4', 'ring-red-600');
+                } else if (diff === -1) {
+                    card.style.transform = 'translateX(-62%) scale(0.82)';
+                    card.style.opacity = '0.5';
+                    card.style.zIndex = '10';
+                    card.style.filter = 'blur(1px)';
+                } else if (diff === 1) {
+                    card.style.transform = 'translateX(62%) scale(0.82)';
+                    card.style.opacity = '0.5';
+                    card.style.zIndex = '10';
+                    card.style.filter = 'blur(1px)';
+                } else {
+                    card.style.transform = diff < 0 ? 'translateX(-120%) scale(0.65)' : 'translateX(120%) scale(0.65)';
+                    card.style.opacity = '0';
+                    card.style.zIndex = '0';
+                    card.style.pointerEvents = 'none';
+                }
+
+                card.innerHTML = `
+                    <div class="relative w-full h-full rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center">
+                        <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover rounded-xl pointer-events-none">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                        <div class="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center">
+                            <span class="bg-slate-900/90 text-lime-400 text-[10px] font-black px-2 py-0.5 rounded-full uppercase border border-lime-400/30">
+                                #${item.id}
+                            </span>
+                            <span class="bg-lime-500 text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-full shadow-md">
+                                Ksh ${item.price}
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3 left-3 right-3 text-left space-y-1">
+                            <h4 class="text-base font-extrabold text-white leading-tight drop-shadow-md">${item.title}</h4>
+                            <p class="text-[11px] text-lime-200/90 line-clamp-2 leading-snug">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (index !== currentIndex) {
+                        currentIndex = index;
+                        renderCarousel();
+                        updateIndicators();
+                        resetAutoPlay();
+                    }
+                };
+
+                track.appendChild(card);
+            });
+        }
+
+        function nextSlide() {
+            if (menuItems.length === 0) return;
+            currentIndex = (currentIndex + 1) % menuItems.length;
+            renderCarousel();
+            updateIndicators();
+        }
+
+        function prevSlide() {
+            if (menuItems.length === 0) return;
+            currentIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
+            renderCarousel();
+            updateIndicators();
+        }
+
+        function updateIndicators() {
+            const currentEl = document.getElementById('current-index');
+            const totalEl = document.getElementById('total-count');
+            if (currentEl) currentEl.innerText = menuItems[currentIndex] ? menuItems[currentIndex].id : (currentIndex + 1);
+            if (totalEl) totalEl.innerText = menuItems.length;
+        }
+
+        // View All Grid Modal Functions
+        function openGridModal() {
+            const modal = document.getElementById('grid-modal');
+            if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeGridModal() {
+            const modal = document.getElementById('grid-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function renderGridModalItems() {
+            const container = document.getElementById('grid-items-container');
+            if (!container) return;
+
+            container.innerHTML = allMenuItems.map(item => `
+                <div onclick="jumpToItem(${item.id}); closeGridModal();" class="bg-slate-900 text-white rounded-2xl p-2 cursor-pointer hover:ring-2 hover:ring-lime-400 transition shadow-md flex flex-col justify-between space-y-2">
+                    <div class="relative w-full h-28 rounded-xl overflow-hidden">
+                        <img src="${item.image}" class="w-full h-full object-cover">
+                        <span class="absolute top-1 right-1 bg-lime-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full">Ksh ${item.price}</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold truncate text-white">${item.title}</h4>
+                        <p class="text-[10px] text-lime-300">Tap to order</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Stays & Accommodations Carousel
+        function renderStaysCarousel() {
+            const track = document.getElementById('stays-carousel-track');
+            if (!track) return;
+            track.innerHTML = '';
+
+            const len = kijanaStaysData.length;
+            kijanaStaysData.forEach((stay, index) => {
+                const card = document.createElement('div');
+                card.className = `stay-card-animated absolute w-[88%] max-w-[300px] rounded-2xl overflow-hidden bg-slate-900 text-white shadow-xl p-3 border-2 border-red-500 flex flex-col justify-between cursor-pointer select-none`;
+
+                let diff = index - currentStayIndex;
+                if (diff < -Math.floor(len / 2)) diff += len;
+                if (diff > Math.floor(len / 2)) diff -= len;
+
+                if (diff === 0) {
+                    card.style.transform = 'translateX(0) scale(1.02)';
+                    card.style.opacity = '1';
+                    card.style.zIndex = '30';
+                    card.classList.add('ring-4', 'ring-lime-400');
+                } else if (diff === -1) {
+                    card.style.transform = 'translateX(-65%) scale(0.82)';
+                    card.style.opacity = '0.5';
+                    card.style.zIndex = '10';
+                    card.style.filter = 'blur(1px)';
+                } else if (diff === 1) {
+                    card.style.transform = 'translateX(65%) scale(0.82)';
+                    card.style.opacity = '0.5';
+                    card.style.zIndex = '10';
+                    card.style.filter = 'blur(1px)';
+                } else {
+                    card.style.transform = diff < 0 ? 'translateX(-120%) scale(0.65)' : 'translateX(120%) scale(0.65)';
+                    card.style.opacity = '0';
+                    card.style.zIndex = '0';
+                }
+
+                card.innerHTML = `
+                    <div class="relative w-full h-36 rounded-xl overflow-hidden bg-slate-800 mb-2">
+                        <img src="${stay.images[0]}" class="w-full h-full object-cover">
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">${stay.distance}</div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-lime-400 leading-tight">${stay.name}</h3>
+                        <p class="text-[11px] text-white/80 mt-0.5 truncate"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${stay.location}</p>
+                        <p class="text-[11px] font-bold text-lime-300 mt-1">${stay.priceRange}</p>
+                    </div>
+                    <a href="https://wa.me/254707269581?text=${encodeURIComponent('Hello Kijana Msafi, I want to book: ' + stay.name)}" target="_blank" class="w-full mt-2 py-2 bg-lime-500 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Book Accommodation
+                    </a>
+                `;
+
+                card.onclick = () => {
+                    if (index !== currentStayIndex) {
+                        currentStayIndex = index;
+                        renderStaysCarousel();
+                        updateStayIndicator();
+                    }
+                };
+
+                track.appendChild(card);
+            });
+
+            updateStayIndicator();
+        }
+
+        function nextStaySlide() {
+            currentStayIndex = (currentStayIndex + 1) % kijanaStaysData.length;
+            renderStaysCarousel();
+        }
+
+        function prevStaySlide() {
+            currentStayIndex = (currentStayIndex - 1 + kijanaStaysData.length) % kijanaStaysData.length;
+            renderStaysCarousel();
+        }
+
+        function updateStayIndicator() {
+            const ind = document.getElementById('stay-indicator');
+            if (ind) ind.innerText = `${currentStayIndex + 1} / ${kijanaStaysData.length}`;
+        }
+
+        function renderStaysScrollView() {
+            const container = document.getElementById('stays-scroll-view');
+            if (!container) return;
+
+            container.innerHTML = kijanaStaysData.map(stay => `
+                <div class="reveal-on-scroll bg-slate-900 text-white rounded-2xl p-4 border-2 border-red-600 space-y-3 shadow-xl">
+                    <div class="relative w-full h-44 rounded-xl overflow-hidden bg-slate-800">
+                        <img id="stay-img-${stay.id}" src="${stay.images[0]}" class="w-full h-full object-cover transition-all duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+                            <span class="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded-full uppercase">${stay.distance}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-lime-400">${stay.name}</h3>
+                        <p class="text-xs text-white/80 flex items-center gap-1 mt-0.5">
+                            <i class="fa-solid fa-location-dot text-red-500 text-[10px]"></i>
+                            <span>${stay.location}</span>
+                        </p>
+                    </div>
+                    <div class="bg-white/5 p-2.5 rounded-xl border border-white/10 space-y-1">
+                        <p class="text-[11px] font-extrabold text-lime-300 uppercase tracking-wider">Room Rates & Prices:</p>
+                        ${stay.rates.map(rate => `
+                            <p class="text-xs text-white/90 font-medium flex items-center gap-1.5">
+                                <i class="fa-solid fa-bed text-red-500 text-[10px]"></i> ${rate}
+                            </p>
+                        `).join('')}
+                    </div>
+                    <a href="https://wa.me/254707269581?text=${encodeURIComponent('Hello Kijana Msafi, I want to book accommodation at: ' + stay.name)}" target="_blank" class="w-full py-2.5 bg-lime-500 hover:bg-lime-600 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md">
+                        <i class="fa-brands fa-whatsapp text-base"></i> Book Accommodation (+254 707 269581)
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function setupScrollReveal() {
+            const scrollContainer = document.getElementById('view-stays');
+            if (scrollContainer) {
+                scrollContainer.addEventListener('scroll', triggerScrollReveal);
+            }
+        }
+
+        function triggerScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal-on-scroll');
+            reveals.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 50) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        function setupTouchGestures() {
+            const track = document.getElementById('carousel-track');
+            if (!track) return;
+
+            track.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            track.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+        }
+
+        function handleSwipe() {
+            if (touchStartX - touchEndX > 35) {
+                if (currentActiveView === 'menu') nextSlide();
+                else if (currentActiveView === 'stays' && staysViewMode === 'carousel') nextStaySlide();
+                resetAutoPlay();
+            } else if (touchEndX - touchStartX > 35) {
+                if (currentActiveView === 'menu') prevSlide();
+                else if (currentActiveView === 'stays' && staysViewMode === 'carousel') prevStaySlide();
+                resetAutoPlay();
+            }
+        }
+
+        // Cart & WhatsApp Functions
+        function addCurrentToCart() {
+            if (menuItems.length === 0) return;
+            const currentItem = menuItems[currentIndex];
+            const existing = cart.find(i => i.id === currentItem.id);
+            
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...currentItem, qty: 1 });
+            }
+
+            updateCartBadge();
+            showToast(`Added ${currentItem.title}`);
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-count');
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            
+            if (badge) {
+                if (totalItems > 0) {
+                    badge.innerText = totalItems;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            const isHidden = modal.classList.contains('opacity-0');
+
+            if (isHidden) {
+                renderCartItems();
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items-container');
+            const totalPriceEl = document.getElementById('cart-total-price');
+            if (!container) return;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 text-white/50">
+                        <i class="fa-solid fa-utensils text-2xl mb-2"></i>
+                        <p class="text-xs">Your food order list is empty.</p>
+                    </div>
+                `;
+                if (totalPriceEl) totalPriceEl.innerText = "Ksh 0";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+
+                return `
+                    <div class="flex items-center justify-between bg-white/5 p-2.5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${item.image}" class="w-10 h-10 object-cover rounded-lg">
+                            <div>
+                                <p class="font-bold text-white text-xs">${item.title}</p>
+                                <p class="text-[10px] text-lime-300">Ksh ${item.price} x ${item.qty} = Ksh ${subtotal}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQty(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center hover:bg-white/20 text-xs">-</button>
+                            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                            <button onclick="updateQty(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-white/10 text-white font-bold flex items-center justify-center hover:bg-white/20 text-xs">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (totalPriceEl) totalPriceEl.innerText = `Ksh ${total}`;
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCartBadge();
+            renderCartItems();
+        }
+
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) {
+                showToast("Please add dishes to your order first!");
+                return;
+            }
+
+            const phone = "254707269581";
+            const nameInput = document.getElementById('cust-name');
+            const noteInput = document.getElementById('cust-note');
+            
+            const name = nameInput ? nameInput.value.trim() : "";
+            const note = noteInput ? noteInput.value.trim() : "";
+
+            let total = 0;
+            let message = `*✨ ADVANCE ORDER - KIJANA MSAFI CAFE ✨*\n`;
+            message += `📍 *Nyahururu Branch*\n\n`;
+            if (name) message += `*Customer Name:* ${name}\n`;
+            message += `---------------------------------\n`;
+            message += `*Ordered Dishes:*\n`;
+
+            cart.forEach(item => {
+                const sub = item.price * item.qty;
+                total += sub;
+                message += `• ${item.title} x${item.qty} - Ksh ${sub}\n`;
+            });
+
+            message += `---------------------------------\n`;
+            message += `*Total Amount:* Ksh ${total}\n`;
+
+            if (note) {
+                message += `*Notes/Table:* ${note}\n`;
+            }
+
+            message += `---------------------------------\n`;
+            message += `Please prepare my order. Thank you!`;
+
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            if (drawer && overlay) {
+                drawer.classList.toggle('translate-x-full');
+                overlay.classList.toggle('opacity-0');
+                overlay.classList.toggle('pointer-events-none');
+            }
+        }
+
+        function showInfoModal(type) {
+            const modal = document.getElementById('info-modal');
+            const content = document.getElementById('info-content');
+
+            if (!modal || !content) return;
+
+            if (type === 'about') {
+                content.innerHTML = `
+                    <div class="w-12 h-12 rounded-2xl bg-red-600 text-lime-300 flex items-center justify-center mx-auto text-xl font-black mb-3 border border-lime-400">✨</div>
+                    <h3 class="font-curly text-2xl text-red-500 mb-2">About Kijana Msafi</h3>
+                    <p class="text-xs text-white/80 leading-relaxed">
+                        Kijana Msafi Hub is Nyahururu's premier cafe, dining, luxury stay, and motor agency network. Operating guest suites near Thomson's Falls, Ol Kalou, and regional hubs across Kenya.
+                    </p>
+                `;
+            } else if (type === 'contact') {
+                content.innerHTML = `
+                    <div class="w-12 h-12 rounded-2xl bg-red-600 text-lime-300 flex items-center justify-center mx-auto text-xl font-black mb-3 border border-lime-400">
+                        <i class="fa-solid fa-phone-volume"></i>
+                    </div>
+                    <h3 class="font-curly text-2xl text-red-500 mb-1">Locations & Inquiries</h3>
+                    <p class="text-xs text-lime-400 font-bold mb-2">Nyahururu • Ol Kalou • Nairobi</p>
+                    <p class="text-xs text-white/90 font-semibold mb-1">WhatsApp & Call Line:</p>
+                    <p class="text-base text-lime-400 font-black mb-3">+254 707 269581</p>
+                    <p class="text-[11px] text-white/60">Cafe Hours: 6:30 AM - 10:30 PM Daily<br>Hotels & Airbnbs: 24/7 Front Desk</p>
+                `;
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeInfoModal() {
+            const modal = document.getElementById('info-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            if (!toast || !msgEl) return;
+
+            msgEl.innerText = msg;
+            toast.classList.remove('-translate-y-10', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-10', 'opacity-0');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
